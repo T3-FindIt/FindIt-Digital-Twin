@@ -82,3 +82,4 @@ crashlytics-build.properties
 # Honestly, I wonder why this isn't in the default include with Git. It's even reccommended to NOT push this to your versioning system
 # These files change with every small change you make...
 Findit Digital Twin/Library/*
+FindIt Digital Twin/Temp/TarGZ/com.unity.template.3d-8.1.3.tar

@@ -77,3 +77,8 @@ crashlytics-build.properties
 # Temporary auto-generated Android Assets
 /[Aa]ssets/[Ss]treamingAssets/aa.meta
 /[Aa]ssets/[Ss]treamingAssets/aa/*
+
+# Let's keep the gitmaster happy
+# Honestly, I wonder why this isn't in the default include with Git. It's even reccommended to NOT push this to your versioning system
+# These files change with every small change you make...
+Findit Digital Twin/Library/*

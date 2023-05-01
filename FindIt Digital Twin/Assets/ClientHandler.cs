@@ -7,8 +7,9 @@ using UnityEngine;
 
 public class ClientHandler : MonoBehaviour
 {
-
     List<NetworkClient> clients = new List<NetworkClient>();
+    List<GameObject> DigitalTwin = new List<GameObject>();
+    public GameObject DigitalTwinPrefab;
 
     public MessageQueue MessageQueue = null;
 
@@ -20,11 +21,14 @@ public class ClientHandler : MonoBehaviour
 
     private void Update()
     {
-        foreach (var item in clients)
+        for (int i = 0; i < clients.Count; i++)
         {
-            if (!item.isAlive())
+            if (!clients[i].isAlive())
             {
-                clients.Remove(item);
+                clients.RemoveAt(i);
+                Destroy(DigitalTwin[i],1);
+                DigitalTwin.RemoveAt(i);
+                i--;
             }
         }
     }
@@ -37,8 +41,36 @@ public class ClientHandler : MonoBehaviour
         }
 
         clients.Add(new NetworkClient(client, ID, MessageQueue));
-
+        SpawnDigitalTwin(ID);
         return true;
+    }
+
+    enum Direction
+    {
+        Up = 0,
+        Down = 1
+    }
+
+    Direction lastDirection = Direction.Up;
+    int x = 0;
+    int z = 0;
+
+    void SpawnDigitalTwin(int id)
+    {
+        if (lastDirection == Direction.Down)
+        {
+            x += 1;
+        }
+
+        if (id % 4 == 0)
+        {
+            z += 1;
+        }
+
+        Vector3 position = new Vector3(x, 0, z);
+
+        GameObject obj = Instantiate(DigitalTwinPrefab, position, Quaternion.identity);
+        DigitalTwin.Add(obj);
     }
 
 }
@@ -92,6 +124,7 @@ public class NetworkClient
                 stream.Close();
                 stream.Dispose();
             }
+            Thread.Sleep(50);
         }
     }
 

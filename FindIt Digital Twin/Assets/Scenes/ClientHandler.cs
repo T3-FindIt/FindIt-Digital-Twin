@@ -18,10 +18,15 @@ public class ClientHandler : MonoBehaviour
         MessageQueue = new MessageQueue();
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Update()
     {
-        
+        foreach (var item in clients)
+        {
+            if (!item.isAlive())
+            {
+                clients.Remove(item);
+            }
+        }
     }
 
     public bool AcceptClient(TcpClient client, int ID)
@@ -30,6 +35,8 @@ public class ClientHandler : MonoBehaviour
         {
             return false;
         }
+
+        clients.Add(new NetworkClient(client, ID, MessageQueue));
 
         return true;
     }
@@ -55,35 +62,42 @@ public class NetworkClient
 
     void StartCommunication()
     {
-        if (client.Connected == false)
+        while (true)
         {
-            // Cleanup thread
-            client.Close();
-            client.Dispose();
+            if (client.Connected == false)
+            {
+                // Cleanup thread
+                client.Close();
 
-            thread.Abort();
-            return;
+                thread.Abort();
+                return;
+            }
+
+            if (client.Available > 0)
+            {
+                NetworkStream stream = client.GetStream();
+
+                byte[] bytes = new byte[client.Available];
+
+                stream.Read(bytes, 0, bytes.Length);
+
+                string message = Encoding.ASCII.GetString(bytes);
+
+                message = ID + " : " + message;
+
+                messageQueue.AddMessage(message);
+
+                //Cleanup the stream
+                stream.Flush();
+                stream.Close();
+                stream.Dispose();
+            }
         }
+    }
 
-        if (client.Available > 0)
-        {
-            NetworkStream stream = client.GetStream();
-
-            byte[] bytes = new byte[client.Available];
-
-            stream.Read(bytes, 0, bytes.Length);
-
-            string message = Encoding.ASCII.GetString(bytes);
-
-            message = ID + " : " + message;
-
-            messageQueue.AddMessage(message);
-
-            //Cleanup the stream
-            stream.Flush();
-            stream.Close();
-            stream.Dispose();
-        }
+    public bool isAlive()
+    {
+        return client.Connected;
     }
 }
 

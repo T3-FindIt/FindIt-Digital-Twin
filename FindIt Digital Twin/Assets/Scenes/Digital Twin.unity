@@ -473,7 +473,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1c0822a1c56b29b42b3c2fcdb1947cc0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  IP: 
+  IP: 192.168.0.136
   port: 6900
   clientID: 0
 --- !u!114 &2036959991
@@ -488,4 +488,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ca8865a387eb284419d35ced144dd986, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  DigitalTwin: []
   DigitalTwinPrefab: {fileID: 8534897757409034907, guid: 33128b6b3f8c8c748bd1524cf0a252ca, type: 3}

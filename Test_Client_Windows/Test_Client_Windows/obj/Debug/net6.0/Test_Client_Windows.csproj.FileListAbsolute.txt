@@ -1,0 +1,15 @@
+C:\Git\FindIt-Digital-Twin\Test_Client_Windows\Test_Client_Windows\bin\Debug\net6.0\Test_Client_Windows.exe
+C:\Git\FindIt-Digital-Twin\Test_Client_Windows\Test_Client_Windows\bin\Debug\net6.0\Test_Client_Windows.deps.json
+C:\Git\FindIt-Digital-Twin\Test_Client_Windows\Test_Client_Windows\bin\Debug\net6.0\Test_Client_Windows.runtimeconfig.json
+C:\Git\FindIt-Digital-Twin\Test_Client_Windows\Test_Client_Windows\bin\Debug\net6.0\Test_Client_Windows.dll
+C:\Git\FindIt-Digital-Twin\Test_Client_Windows\Test_Client_Windows\bin\Debug\net6.0\Test_Client_Windows.pdb
+C:\Git\FindIt-Digital-Twin\Test_Client_Windows\Test_Client_Windows\obj\Debug\net6.0\Test_Client_Windows.csproj.AssemblyReference.cache
+C:\Git\FindIt-Digital-Twin\Test_Client_Windows\Test_Client_Windows\obj\Debug\net6.0\Test_Client_Windows.GeneratedMSBuildEditorConfig.editorconfig
+C:\Git\FindIt-Digital-Twin\Test_Client_Windows\Test_Client_Windows\obj\Debug\net6.0\Test_Client_Windows.AssemblyInfoInputs.cache
+C:\Git\FindIt-Digital-Twin\Test_Client_Windows\Test_Client_Windows\obj\Debug\net6.0\Test_Client_Windows.AssemblyInfo.cs
+C:\Git\FindIt-Digital-Twin\Test_Client_Windows\Test_Client_Windows\obj\Debug\net6.0\Test_Client_Windows.csproj.CoreCompileInputs.cache
+C:\Git\FindIt-Digital-Twin\Test_Client_Windows\Test_Client_Windows\obj\Debug\net6.0\Test_Client_Windows.dll
+C:\Git\FindIt-Digital-Twin\Test_Client_Windows\Test_Client_Windows\obj\Debug\net6.0\refint\Test_Client_Windows.dll
+C:\Git\FindIt-Digital-Twin\Test_Client_Windows\Test_Client_Windows\obj\Debug\net6.0\Test_Client_Windows.pdb
+C:\Git\FindIt-Digital-Twin\Test_Client_Windows\Test_Client_Windows\obj\Debug\net6.0\Test_Client_Windows.genruntimeconfig.cache
+C:\Git\FindIt-Digital-Twin\Test_Client_Windows\Test_Client_Windows\obj\Debug\net6.0\ref\Test_Client_Windows.dll

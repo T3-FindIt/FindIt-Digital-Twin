@@ -7,22 +7,24 @@ using System.Text;
 using System.Threading;
 using UnityEngine;
 
-public class NewBehaviourScript : MonoBehaviour
+public class ServerScript : MonoBehaviour
 {
-    string IP = null;
-    int port = 6900; // Should be fine.
     TcpListener listener = null;
-    int clientID = 0;
     TcpClient tcpClient = null;
+
+    [SerializeField] string IP = null;
+    [SerializeField] int port = 6900; // Should be fine.
+    [SerializeField] int clientID = 0;
 
     MessageQueue messageQueue = null;
 
     ClientHandler clientHandler = null;
     void Start()
     {
+        Debug.Log("Starting Demo!");
         if (!System.Net.NetworkInformation.NetworkInterface.GetIsNetworkAvailable())
         {
-            Console.WriteLine("No network available, please check connections!");
+            Debug.Log("No network available, please check connections!");
             return;
         }
 
@@ -47,8 +49,7 @@ public class NewBehaviourScript : MonoBehaviour
         listener = new TcpListener(IPAddress.Parse(IP), port);
         listener.Start();
 
-        Console.WriteLine("Server starting!");
-        Console.WriteLine("Server isActive = {0}",listener.Server.Connected);
+        Debug.Log("Server starting!");
         tcpClient = default(TcpClient);
     }
 
@@ -58,7 +59,7 @@ public class NewBehaviourScript : MonoBehaviour
         if(listener.Server.Connected)
         {
             tcpClient = listener.AcceptTcpClient();
-            Console.WriteLine("Client connected!");
+            Debug.Log("Client connected!");
             clientHandler.AcceptClient(tcpClient, clientID);
             clientID++;
         }
@@ -66,7 +67,7 @@ public class NewBehaviourScript : MonoBehaviour
         if (messageQueue.MessageAvailable())
         {
             string msg = messageQueue.GetNextMessage();
-            Console.WriteLine("Message received:\n{0}", msg);
+            Debug.Log("Message received:\n"+ msg);
         }
     }
 }

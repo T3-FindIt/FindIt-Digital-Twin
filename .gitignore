@@ -2,14 +2,14 @@
 #
 # Get latest from https://github.com/github/gitignore/blob/main/Unity.gitignore
 #
-/[Ll]ibrary/
-/[Tt]emp/
-/[Oo]bj/
-/[Bb]uild/
-/[Bb]uilds/
-/[Ll]ogs/
-/[Uu]ser[Ss]ettings/
-/[Aa]ssets/[Ss]cenes/[Ss]andbox/
+FindIt Digital Twin/[Ll]ibrary/
+FindIt Digital Twin/[Tt]emp/
+FindIt Digital Twin/[Oo]bj/
+FindIt Digital Twin/[Bb]uild/
+FindIt Digital Twin/[Bb]uilds/
+FindIt Digital Twin/[Ll]ogs/
+FindIt Digital Twin/[Uu]ser[Ss]ettings/
+FindIt Digital Twin/[Aa]ssets/[Ss]cenes/[Ss]andbox/
 
 # MemoryCaptures can get excessive in size.
 # They also could contain extremely sensitive data

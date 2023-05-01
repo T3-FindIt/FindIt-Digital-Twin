@@ -14,60 +14,80 @@ public class ServerScript : MonoBehaviour
 
     [SerializeField] string IP = null;
     [SerializeField] int port = 6900; // Should be fine.
-    [SerializeField] int clientID = 0;
+    [SerializeField] int clientID = 1;
 
     MessageQueue messageQueue = null;
 
     ClientHandler clientHandler = null;
+
+    Thread thread;
     void Start()
     {
-        Debug.Log("Starting Demo!");
-        if (!System.Net.NetworkInformation.NetworkInterface.GetIsNetworkAvailable())
+        if (string.IsNullOrEmpty(IP) || string.IsNullOrWhiteSpace(IP))
         {
-            Debug.Log("No network available, please check connections!");
-            return;
+            if (!System.Net.NetworkInformation.NetworkInterface.GetIsNetworkAvailable())
+            {
+                Debug.Log("No network available, please check connections!");
+                return;
+            }
+
+            IPHostEntry IpAdresses = Dns.GetHostEntry(Dns.GetHostName());
+
+            foreach (var item in IpAdresses.AddressList)
+            {
+                if (item.AddressFamily == AddressFamily.InterNetwork)
+                {
+                    IP = item.ToString();
+                    break;
+                }
+            }
         }
 
         clientHandler = gameObject.GetComponent<ClientHandler>();
-        if(clientHandler == null)
+        if (clientHandler == null)
         {
             clientHandler = gameObject.AddComponent<ClientHandler>();
         }
 
-        messageQueue = clientHandler.MessageQueue;
-
-        IPHostEntry IpAdresses = Dns.GetHostEntry(Dns.GetHostName());
-
-        foreach (var item in IpAdresses.AddressList)
-        {
-            if(item.AddressFamily == AddressFamily.InterNetwork)
-            {
-                IP = item.ToString();
-            }
-        }
-
         listener = new TcpListener(IPAddress.Parse(IP), port);
-        listener.Start();
+        tcpClient = default;
 
-        Debug.Log("Server starting!");
-        tcpClient = default(TcpClient);
+        listener.Start();
+        thread = new Thread(DetectIncomingClient);
+        thread.Start();
     }
 
     // Update is called once per frame
     void Update()
     {
-        if(listener.Server.Connected)
+        if (messageQueue == null)
         {
-            tcpClient = listener.AcceptTcpClient();
-            Debug.Log("Client connected!");
-            clientHandler.AcceptClient(tcpClient, clientID);
-            clientID++;
+            messageQueue = clientHandler.MessageQueue;
         }
 
         if (messageQueue.MessageAvailable())
         {
             string msg = messageQueue.GetNextMessage();
-            Debug.Log("Message received:\n"+ msg);
+            Debug.Log("Message received:\n" + msg);
+        }
+
+        if (clientHandler.hasUninstatiatedClient)
+        {
+            clientHandler.SpawnDigitalTwin(clientID);
+            clientHandler.hasUninstatiatedClient = false;
         }
     }
+
+    private void DetectIncomingClient()
+    {
+        Debug.Log("Waiting For A Client!");
+        while (true)
+        {
+            tcpClient = listener.AcceptTcpClient();
+            Debug.Log("Client connected with ID: " + clientID);
+            clientHandler.AcceptClient(tcpClient, clientID);
+            clientID += 1;
+        }
+    }
+
 }

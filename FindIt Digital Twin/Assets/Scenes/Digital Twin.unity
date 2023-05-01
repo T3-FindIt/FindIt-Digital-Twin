@@ -473,7 +473,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1c0822a1c56b29b42b3c2fcdb1947cc0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  IP: 192.168.0.136
+  IP: 
   port: 6900
   clientID: 0
 --- !u!114 &2036959991

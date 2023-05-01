@@ -7,16 +7,19 @@ using UnityEngine;
 
 public class ClientHandler : MonoBehaviour
 {
-    List<NetworkClient> clients = new List<NetworkClient>();
-    List<GameObject> DigitalTwin = new List<GameObject>();
-    public GameObject DigitalTwinPrefab;
+    [SerializeField] List<NetworkClient> clients = new List<NetworkClient>();
+    [SerializeField] List<GameObject> DigitalTwin = new List<GameObject>();
+    [SerializeField] GameObject DigitalTwinPrefab;
 
     public MessageQueue MessageQueue = null;
+
+    public bool hasUninstatiatedClient { get; set; }
 
     // Start is called before the first frame update
     void Start()
     {
         MessageQueue = new MessageQueue();
+        hasUninstatiatedClient = false;
     }
 
     private void Update()
@@ -41,7 +44,7 @@ public class ClientHandler : MonoBehaviour
         }
 
         clients.Add(new NetworkClient(client, ID, MessageQueue));
-        SpawnDigitalTwin(ID);
+        hasUninstatiatedClient = true;
         return true;
     }
 
@@ -55,7 +58,7 @@ public class ClientHandler : MonoBehaviour
     int x = 0;
     int z = 0;
 
-    void SpawnDigitalTwin(int id)
+    public void SpawnDigitalTwin(int id)
     {
         if (lastDirection == Direction.Down)
         {
@@ -94,6 +97,8 @@ public class NetworkClient
 
     void StartCommunication()
     {
+        Debug.Log("Client Connected, Starting communication");
+        NetworkStream stream = client.GetStream();
         while (true)
         {
             if (client.Connected == false)
@@ -107,7 +112,6 @@ public class NetworkClient
 
             if (client.Available > 0)
             {
-                NetworkStream stream = client.GetStream();
 
                 byte[] bytes = new byte[client.Available];
 
@@ -121,8 +125,6 @@ public class NetworkClient
 
                 //Cleanup the stream
                 stream.Flush();
-                stream.Close();
-                stream.Dispose();
             }
             Thread.Sleep(50);
         }

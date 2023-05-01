@@ -9,6 +9,7 @@
 /[Bb]uilds/
 /[Ll]ogs/
 /[Uu]ser[Ss]ettings/
+/[Aa]ssets/[Ss]cenes/[Ss]andbox/
 
 # MemoryCaptures can get excessive in size.
 # They also could contain extremely sensitive data
@@ -25,6 +26,9 @@
 
 # Visual Studio cache directory
 .vs/
+
+# Visual Studio Code directory
+.vscode/
 
 # Gradle cache directory
 .gradle/
@@ -63,6 +67,9 @@ sysinfo.txt
 
 # Crashlytics generated file
 crashlytics-build.properties
+
+# User setting files
+/[Pp]rojectSettings/[Pp]ackages/com.unity.probuilder/Settings.json
 
 # Packed Addressables
 /[Aa]ssets/[Aa]ddressable[Aa]ssets[Dd]ata/*/*.bin*

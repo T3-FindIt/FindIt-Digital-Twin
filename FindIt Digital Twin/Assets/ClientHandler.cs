@@ -16,6 +16,8 @@ public class ClientHandler : MonoBehaviour
 
     public MessageQueue MessageQueue = null;
 
+    private bool isPulsing = false;
+
     public bool hasUninstatiatedClient { get; set; }
 
     // Start is called before the first frame update
@@ -23,21 +25,35 @@ public class ClientHandler : MonoBehaviour
     {
         MessageQueue = new MessageQueue();
         hasUninstatiatedClient = false;
+
     }
 
     private void Update()
     {
+        if (isPulsing == false)
+        {
+            StartCoroutine(PulseClients());
+        }
+
+    }
+
+    public IEnumerator PulseClients()
+    {
+        isPulsing = true;
         for (int i = 0; i < clients.Count; i++)
         {
             if (!clients[i].isAlive())
             {
                 clients.RemoveAt(i);
-                Destroy(DigitalTwin[i],1);
+                GameObject temp = DigitalTwin[i];
                 DigitalTwin.RemoveAt(i);
+                Destroy(temp, 1);
                 i--;
                 GetComponent<ServerScript>().ReduceClientCount();
             }
         }
+        isPulsing = false;
+        yield return new WaitForSeconds(5);
     }
 
     public bool AcceptClient(TcpClient client, int ID)
@@ -159,9 +175,21 @@ public class NetworkClient
         }
     }
 
+    byte[] heartBeatData = Encoding.ASCII.GetBytes("{\"Action\":\"Heartbeat\"}");
+
     public bool isAlive()
     {
-        return client.Connected;
+        int bytes = 0;
+        try
+        {
+            bytes = client.Client.Send(heartBeatData);
+        }
+        catch (SocketException ex)
+        {
+            Debug.LogError(ex.Message);
+            bytes = -1;
+        }
+       return bytes > 0;
     }
 }
 
@@ -204,6 +232,7 @@ public class MessageQueue
             queue.RemoveAt(0);
             // Conver the data into a list of strings.
             string data = returnMessage.message.Trim();
+            Debug.Log(data);
             data = data.Replace("{", "");
             data = data.Replace("}", "");
             string[] splitData = data.Split(','); // Split the data into the segments

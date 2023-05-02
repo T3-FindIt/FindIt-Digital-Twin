@@ -87,7 +87,6 @@ public class ServerScript : MonoBehaviour
                         string[] value = message.data[i].Split(':');
                         if(value.Length == 2)
                         {
-                            Debug.Log(value[1]);
                             if (!Int32.TryParse(value[1], out nodes))
                             {
                                 throw new ArgumentOutOfRangeException("Invalid data!");
@@ -106,7 +105,7 @@ public class ServerScript : MonoBehaviour
         }
         catch (ArgumentOutOfRangeException e)
         {
-            Debug.Log(e.ToString());
+            Debug.LogError(e.ToString());
         }
 
         if (clientHandler.hasUninstatiatedClient)

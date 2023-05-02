@@ -1,3 +1,5 @@
+using Newtonsoft.Json.Bson;
+using Newtonsoft.Json.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using System.Net.Sockets;
@@ -32,6 +34,7 @@ public class ClientHandler : MonoBehaviour
                 Destroy(DigitalTwin[i],1);
                 DigitalTwin.RemoveAt(i);
                 i--;
+                GetComponent<ServerScript>().ReduceClientCount();
             }
         }
     }
@@ -56,26 +59,40 @@ public class ClientHandler : MonoBehaviour
 
     Direction lastDirection = Direction.Up;
     int x = 0;
-    int z = 0;
+    int z = 3;
 
     public void SpawnDigitalTwin(int id)
     {
         if (lastDirection == Direction.Down)
         {
             x += 1;
+            lastDirection = Direction.Up;
         }
-
-        if (id % 4 == 0)
+        else
         {
-            z += 1;
+            x -= 1;
+            lastDirection = Direction.Down;
         }
 
         Vector3 position = new Vector3(x, 0, z);
 
         GameObject obj = Instantiate(DigitalTwinPrefab, position, Quaternion.identity);
+        obj.name = DigitalTwinPrefab.name + " | " + id; // Makes it a bit easier.
         DigitalTwin.Add(obj);
     }
 
+    public GameObject FindTwinByID(int id)
+    {
+        foreach (var item in DigitalTwin)
+        {
+            if(item.name.Contains(id.ToString()))
+            {
+                return item;
+            }
+        }
+
+        return null;
+    }
 }
 
 public class NetworkClient
@@ -117,9 +134,9 @@ public class NetworkClient
 
                 stream.Read(bytes, 0, bytes.Length);
 
-                string message = Encoding.ASCII.GetString(bytes);
+                string data = Encoding.ASCII.GetString(bytes);
 
-                message = ID + " : " + message;
+                MessageQueue.Message message = new MessageQueue.Message(ID, data);
 
                 messageQueue.AddMessage(message);
 
@@ -138,20 +155,47 @@ public class NetworkClient
 
 public class MessageQueue
 {
-    List<string> queue = null;
+    List<Message> queue = null;
 
     public MessageQueue()
     {
-        queue = new List<string>();
+        queue = new List<Message>();
     }
 
-    public string GetNextMessage()
+    public class Message
+    {        
+        public int ID { get; private set; }
+        public string message { get; private set; }
+        public Message(int id, string message)
+        {
+            this.id = id;
+            this.message = message;
+        }
+    }
+
+    public class DecodedMessage
+    {
+        public int ID { get; private set; }
+        public string[] data {get; private set;}
+        public DecodedMessage(int id, string[] data)
+        {
+            this.ID = id;
+            this.data = data;
+        }
+    }
+
+    public DecodedMessage GetNextMessage()
     {
         if(queue.Count > 0)
         {
-            string message = queue[0];
+            Message returnMessage = queue[0];
             queue.RemoveAt(0);
-            return message;
+            // Conver the data into a list of strings.
+            string data = returnMessage.message.Trim();
+            data.Remove(0); // Remove the first character, which is a '{'
+            data.Remove(data.Length - 1); // Remove the last character, which is a '}'
+            string[] splitData = data.Split(',');
+            return new DecodedMessage(returnMessage.ID, splitData);
         }
         else
         {
@@ -159,7 +203,7 @@ public class MessageQueue
         }
     }
 
-    public void AddMessage(string message)
+    public void AddMessage(Message message)
     {
         queue.Add(message);
     }

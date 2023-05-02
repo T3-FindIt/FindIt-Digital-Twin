@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class ClientHandler : MonoBehaviour
@@ -46,8 +47,8 @@ public class ClientHandler : MonoBehaviour
             return false;
         }
 
-        clients.Add(new NetworkClient(client, ID, MessageQueue));
         hasUninstatiatedClient = true;
+        clients.Add(new NetworkClient(client, ID, MessageQueue, hasUninstatiatedClient));
         return true;
     }
 
@@ -61,24 +62,27 @@ public class ClientHandler : MonoBehaviour
     int x = 0;
     int z = 3;
 
-    public void SpawnDigitalTwin(int id)
+    public void SpawnDigitalTwin()
     {
-        if (lastDirection == Direction.Down)
+        foreach (var client in clients)
         {
-            x += 1;
-            lastDirection = Direction.Up;
-        }
-        else
-        {
-            x -= 1;
-            lastDirection = Direction.Down;
-        }
+            if (lastDirection == Direction.Down)
+            {
+                x += 1;
+                lastDirection = Direction.Up;
+            }
+            else
+            {
+                x -= 1;
+                lastDirection = Direction.Down;
+            }
 
-        Vector3 position = new Vector3(x, 0, z);
+            Vector3 position = new Vector3(x, 0, z);
 
-        GameObject obj = Instantiate(DigitalTwinPrefab, position, Quaternion.identity);
-        obj.name = DigitalTwinPrefab.name + " | " + id; // Makes it a bit easier.
-        DigitalTwin.Add(obj);
+            GameObject obj = Instantiate(DigitalTwinPrefab, position, Quaternion.identity);
+            obj.name = DigitalTwinPrefab.name + " | " + client.ID; // Makes it a bit easier.
+            DigitalTwin.Add(obj);
+        }
     }
 
     public GameObject FindTwinByID(int id)
@@ -97,19 +101,27 @@ public class ClientHandler : MonoBehaviour
 
 public class NetworkClient
 {
+    public int ID { get; private set;}
+    public bool isUninstatiated { get; private set; }
+
     TcpClient client;
-    int ID = 0;
     MessageQueue messageQueue = null;
     Thread thread = null;
 
-    public NetworkClient(TcpClient client, int ID, MessageQueue queue)
+    public NetworkClient(TcpClient client, int ID, MessageQueue queue, bool isUnInstatiated)
     {
         this.client = client;
         this.ID = ID;
         this.messageQueue = queue;
+        this.isUninstatiated = isUnInstatiated;
 
         thread = new Thread(StartCommunication);
         thread.Start();
+    }
+
+    public void IsInstatiated()
+    {
+        isUninstatiated = false;
     }
 
     void StartCommunication()
@@ -192,9 +204,9 @@ public class MessageQueue
             queue.RemoveAt(0);
             // Conver the data into a list of strings.
             string data = returnMessage.message.Trim();
-            data.Remove(0); // Remove the first character, which is a '{'
-            data.Remove(data.Length - 1); // Remove the last character, which is a '}'
-            string[] splitData = data.Split(',');
+            data = data.Replace("{", "");
+            data = data.Replace("}", "");
+            string[] splitData = data.Split(','); // Split the data into the segments
             return new DecodedMessage(returnMessage.ID, splitData);
         }
         else

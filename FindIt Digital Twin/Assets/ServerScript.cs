@@ -71,17 +71,27 @@ public class ServerScript : MonoBehaviour
             {
                 MessageQueue.DecodedMessage message = messageQueue.GetNextMessage();
                 GameObject obj = clientHandler.FindTwinByID(message.ID);
+                if (obj == null)
+                {
+                    Debug.Log("No objects with that ID found!");
+                    return;
+                }
                 // Get the number of nodes from the message.
 
                 int nodes = 0;
-
+                
                 for (int i = 0; i < message.data.Length; i++)
                 {
                     if (message.data[i].Contains("Nodes"))
                     {
-                        if (!Int32.TryParse(message.data[i + 1], out nodes))
-                        { 
-                            throw new ArgumentOutOfRangeException("Invalid data!");
+                        string[] value = message.data[i].Split(':');
+                        if(value.Length == 2)
+                        {
+                            Debug.Log(value[1]);
+                            if (!Int32.TryParse(value[1], out nodes))
+                            {
+                                throw new ArgumentOutOfRangeException("Invalid data!");
+                            }
                         }
                         break;
                     }
@@ -101,7 +111,7 @@ public class ServerScript : MonoBehaviour
 
         if (clientHandler.hasUninstatiatedClient)
         {
-            clientHandler.SpawnDigitalTwin(clientID);
+            clientHandler.SpawnDigitalTwin();
             clientHandler.hasUninstatiatedClient = false;
         }
     }

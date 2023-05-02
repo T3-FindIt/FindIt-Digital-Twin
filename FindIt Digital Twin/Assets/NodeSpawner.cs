@@ -1,29 +1,31 @@
+using JetBrains.Annotations;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class NodeSpawner : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    [SerializeField] int Nodes = 0;
+    [SerializeField] int Offset = 2;
+    [SerializeField] GameObject NodePrefab;
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-}
+    public bool HasNodes = false;
 
-class Node
-{
-    public int x;
-    public int z;
-    public Node(int x, int z)
+    public void SpawnNodes(int nodes)
     {
-        this.x = x;
-        this.z = z;
+        if (nodes <= 0)
+        {
+            return;
+        }
+
+        Nodes = nodes;
+
+        for (int i = 0; i < Nodes; i++)
+        {
+            Vector3 pos = new Vector3(transform.position.x,transform.position.y, i * offset);
+            GameObject node = Instantiate(NodePrefab, pos, Quaternion.identity);
+        }
+
+        HasNodes = true;
     }
 }

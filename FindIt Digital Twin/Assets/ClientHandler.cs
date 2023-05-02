@@ -52,8 +52,8 @@ public class ClientHandler : MonoBehaviour
                 GetComponent<ServerScript>().ReduceClientCount();
             }
         }
-        isPulsing = false;
         yield return new WaitForSeconds(5);
+        isPulsing = false;
     }
 
     public bool AcceptClient(TcpClient client, int ID)

@@ -140,7 +140,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2478961553079219844, guid: b4f729d9618a65543baedfac3b0a7311, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2478961553079219844, guid: b4f729d9618a65543baedfac3b0a7311, type: 3}
       propertyPath: m_LocalPosition.z
@@ -475,7 +475,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   IP: 
   port: 6900
-  clientID: 0
+  clientID: 1
 --- !u!114 &2036959991
 MonoBehaviour:
   m_ObjectHideFlags: 0

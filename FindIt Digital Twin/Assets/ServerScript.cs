@@ -60,20 +60,57 @@ public class ServerScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (messageQueue == null)
+        try
         {
-            messageQueue = clientHandler.MessageQueue;
-        }
+            if (messageQueue == null)
+            {
+                messageQueue = clientHandler.MessageQueue;
+            }
 
-        if (messageQueue.MessageAvailable())
+            if (messageQueue.MessageAvailable())
+            {
+                MessageQueue.DecodedMessage message = messageQueue.GetNextMessage();
+                GameObject obj = clientHandler.FindTwinByID(message.ID);
+                if (obj == null)
+                {
+                    Debug.Log("No objects with that ID found!");
+                    return;
+                }
+                // Get the number of nodes from the message.
+
+                int nodes = 0;
+                
+                for (int i = 0; i < message.data.Length; i++)
+                {
+                    if (message.data[i].Contains("Nodes"))
+                    {
+                        string[] value = message.data[i].Split(':');
+                        if(value.Length == 2)
+                        {
+                            if (!Int32.TryParse(value[1], out nodes))
+                            {
+                                throw new ArgumentOutOfRangeException("Invalid data!");
+                            }
+                        }
+                        break;
+                    }
+                }
+
+                NodeSpawner spawner = obj.GetComponent<NodeSpawner>();
+                if (!spawner.HasNodes)
+                {
+                    spawner.SpawnNodes(nodes);
+                }
+            }
+        }
+        catch (ArgumentOutOfRangeException e)
         {
-            string msg = messageQueue.GetNextMessage();
-            Debug.Log("Message received:\n" + msg);
+            Debug.LogError(e.ToString());
         }
 
         if (clientHandler.hasUninstatiatedClient)
         {
-            clientHandler.SpawnDigitalTwin(clientID);
+            clientHandler.SpawnDigitalTwin();
             clientHandler.hasUninstatiatedClient = false;
         }
     }
@@ -88,6 +125,11 @@ public class ServerScript : MonoBehaviour
             clientHandler.AcceptClient(tcpClient, clientID);
             clientID += 1;
         }
+    }
+
+    public void ReduceClientCount()
+    {
+        clientID -= 1;
     }
 
 }

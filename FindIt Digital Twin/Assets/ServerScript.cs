@@ -60,15 +60,43 @@ public class ServerScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (messageQueue == null)
+        try
         {
-            messageQueue = clientHandler.MessageQueue;
-        }
+            if (messageQueue == null)
+            {
+                messageQueue = clientHandler.MessageQueue;
+            }
 
-        if (messageQueue.MessageAvailable())
+            if (messageQueue.MessageAvailable())
+            {
+                MessageQueue.DecodedMessage message = messageQueue.GetNextMessage();
+                GameObject obj = clientHandler.FindTwinByID(message.ID);
+                // Get the number of nodes from the message.
+
+                int nodes = 0;
+
+                for (int i = 0; i < message.data.Length; i++)
+                {
+                    if (message.data[i].Contains("Nodes"))
+                    {
+                        if (!Int32.TryParse(message.data[i + 1], out nodes))
+                        { }
+                            throw new ArgumentOutOfRangeException("Invalid data!");
+                        }
+                        break;
+                    }
+                }
+
+                NodeSpawner spawner = obj.GetComponent<NodeSpawner>();
+                if (!spawner.HasNodes)
+                {
+                    spawner.SpawnNodes(nodes);
+                }
+            }
+        }
+        catch (Exception e)
         {
-            string msg = messageQueue.GetNextMessage();
-            Debug.Log("Message received:\n" + msg);
+            Debug.Log(e.ToString());
         }
 
         if (clientHandler.hasUninstatiatedClient)
@@ -88,6 +116,11 @@ public class ServerScript : MonoBehaviour
             clientHandler.AcceptClient(tcpClient, clientID);
             clientID += 1;
         }
+    }
+
+    public void ReduceClientCount()
+    {
+        clientID -= 1;
     }
 
 }

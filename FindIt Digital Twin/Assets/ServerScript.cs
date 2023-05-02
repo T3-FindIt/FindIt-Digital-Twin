@@ -80,7 +80,7 @@ public class ServerScript : MonoBehaviour
                     if (message.data[i].Contains("Nodes"))
                     {
                         if (!Int32.TryParse(message.data[i + 1], out nodes))
-                        { }
+                        { 
                             throw new ArgumentOutOfRangeException("Invalid data!");
                         }
                         break;
@@ -94,7 +94,7 @@ public class ServerScript : MonoBehaviour
                 }
             }
         }
-        catch (Exception e)
+        catch (ArgumentOutOfRangeException e)
         {
             Debug.Log(e.ToString());
         }

@@ -168,7 +168,7 @@ public class MessageQueue
         public string message { get; private set; }
         public Message(int id, string message)
         {
-            this.id = id;
+            this.ID = id;
             this.message = message;
         }
     }

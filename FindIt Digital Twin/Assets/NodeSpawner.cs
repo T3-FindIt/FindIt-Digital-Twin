@@ -22,7 +22,7 @@ public class NodeSpawner : MonoBehaviour
 
         for (int i = 0; i < Nodes; i++)
         {
-            Vector3 pos = new Vector3(transform.position.x,transform.position.y, i * offset);
+            Vector3 pos = new Vector3(transform.position.x,transform.position.y, i * Offset);
             GameObject node = Instantiate(NodePrefab, pos, Quaternion.identity);
         }
 

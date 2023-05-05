@@ -186,7 +186,7 @@ public class NetworkClient
         }
         catch (SocketException ex)
         {
-            Debug.LogError(ex.Message);
+            Debug.LogError(ex.Message + " | Client was not formally disconnected.");
             bytes = -1;
         }
        return bytes > 0;

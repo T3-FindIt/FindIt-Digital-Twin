@@ -89,6 +89,7 @@ public class ServerScript : MonoBehaviour
                         {
                             if (!Int32.TryParse(value[1], out nodes))
                             {
+                                Debug.Log(value[1]);
                                 throw new ArgumentOutOfRangeException("Invalid data!");
                             }
                         }
@@ -108,10 +109,10 @@ public class ServerScript : MonoBehaviour
             Debug.LogError(e.ToString());
         }
 
-        if (clientHandler.hasUninstatiatedClient)
+        if (clientHandler.hasUninstatiatedClients())
         {
+            Debug.Log("Spawning Digital Twin!");
             clientHandler.SpawnDigitalTwin();
-            clientHandler.hasUninstatiatedClient = false;
         }
     }
 
@@ -122,7 +123,10 @@ public class ServerScript : MonoBehaviour
         {
             tcpClient = listener.AcceptTcpClient();
             Debug.Log("Client connected with ID: " + clientID);
-            clientHandler.AcceptClient(tcpClient, clientID);
+            if (!clientHandler.AcceptClient(tcpClient, clientID))
+            {
+                Debug.LogError("Client was null!");
+            }
             clientID += 1;
         }
     }

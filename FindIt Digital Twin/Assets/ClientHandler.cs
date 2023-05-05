@@ -7,10 +7,12 @@ using System.Text;
 using System.Threading;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class ClientHandler : MonoBehaviour
 {
     [SerializeField] List<NetworkClient> clients = new List<NetworkClient>();
+    [SerializeField] List<NetworkClient> uninstantiatedClients = new List<NetworkClient>();
     [SerializeField] List<GameObject> DigitalTwin = new List<GameObject>();
     [SerializeField] GameObject DigitalTwinPrefab;
 
@@ -18,13 +20,13 @@ public class ClientHandler : MonoBehaviour
 
     private bool isPulsing = false;
 
-    public bool hasUninstatiatedClient { get; set; }
+    const bool Uninstatiated = false;
+    const bool Instatiated = true;
 
     // Start is called before the first frame update
     void Start()
     {
         MessageQueue = new MessageQueue();
-        hasUninstatiatedClient = false;
 
     }
 
@@ -63,9 +65,13 @@ public class ClientHandler : MonoBehaviour
             return false;
         }
 
-        hasUninstatiatedClient = true;
-        clients.Add(new NetworkClient(client, ID, MessageQueue, hasUninstatiatedClient));
+        uninstantiatedClients.Add(new NetworkClient(client, ID, MessageQueue, Uninstatiated));
         return true;
+    }
+
+    public bool hasUninstatiatedClients()
+    {
+        return uninstantiatedClients.Count > 0;
     }
 
     enum Direction
@@ -80,7 +86,8 @@ public class ClientHandler : MonoBehaviour
 
     public void SpawnDigitalTwin()
     {
-        foreach (var client in clients)
+        List<NetworkClient> clientsToBeRemoved = new List<NetworkClient>();
+        foreach (var client in uninstantiatedClients)
         {
             if (lastDirection == Direction.Down)
             {
@@ -98,7 +105,11 @@ public class ClientHandler : MonoBehaviour
             GameObject obj = Instantiate(DigitalTwinPrefab, position, Quaternion.identity);
             obj.name = DigitalTwinPrefab.name + " | " + client.ID; // Makes it a bit easier.
             DigitalTwin.Add(obj);
+
+            client.IsInstatiated();
+            clients.Add(client);
         }
+        uninstantiatedClients.Clear();
     }
 
     public GameObject FindTwinByID(int id)
@@ -186,7 +197,7 @@ public class NetworkClient
         }
         catch (SocketException ex)
         {
-            Debug.LogError(ex.Message);
+            Debug.LogError(ex.Message + " | Client was not formally disconnected.");
             bytes = -1;
         }
        return bytes > 0;

@@ -474,7 +474,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   IP: 
-  port: 6900
+  port: 4200
   clientID: 1
 --- !u!114 &2036959991
 MonoBehaviour:
